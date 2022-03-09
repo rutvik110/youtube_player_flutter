@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -27,15 +25,22 @@ class YoutubePlayerDemoApp extends StatelessWidget {
       title: 'Youtube Player Flutter',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        appBarTheme: const AppBarTheme(
+        appBarTheme: AppBarTheme(
           color: Colors.blueAccent,
-          textTheme: TextTheme(
+          toolbarTextStyle: const TextTheme(
             headline6: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w300,
               fontSize: 20.0,
             ),
-          ),
+          ).bodyText2,
+          titleTextStyle: const TextTheme(
+            headline6: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w300,
+              fontSize: 20.0,
+            ),
+          ).headline6,
         ),
         iconTheme: const IconThemeData(
           color: Colors.blueAccent,
@@ -131,30 +136,36 @@ class _MyHomePageState extends State<MyHomePage> {
         controller: _controller,
         showVideoProgressIndicator: true,
         progressIndicatorColor: Colors.blueAccent,
-        topActions: <Widget>[
-          const SizedBox(width: 8.0),
-          Expanded(
-            child: Text(
-              _controller.metadata.title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 18.0,
-              ),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-            ),
-          ),
-          IconButton(
-            icon: const Icon(
-              Icons.settings,
-              color: Colors.white,
-              size: 25.0,
-            ),
-            onPressed: () {
-              log('Settings Tapped!');
-            },
-          ),
-        ],
+
+        overlay: Container(
+          height: 50,
+          width: 50,
+          color: Colors.red,
+        ),
+        // topActions: <Widget>[
+        //   const SizedBox(width: 8.0),
+        //   Expanded(
+        //     child: Text(
+        //       _controller.metadata.title,
+        //       style: const TextStyle(
+        //         color: Colors.white,
+        //         fontSize: 18.0,
+        //       ),
+        //       overflow: TextOverflow.ellipsis,
+        //       maxLines: 1,
+        //     ),
+        //   ),
+        //   IconButton(
+        //     icon: const Icon(
+        //       Icons.settings,
+        //       color: Colors.white,
+        //       size: 25.0,
+        //     ),
+        //     onPressed: () {
+        //       log('Settings Tapped!');
+        //     },
+        //   ),
+        // ],
         onReady: () {
           _isPlayerReady = true;
         },
