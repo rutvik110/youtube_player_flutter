@@ -133,7 +133,10 @@ class YoutubePlayer extends StatefulWidget {
   final bool showVideoProgressIndicator;
 
   /// Overlay to be placed between video stream and video controlls.
-  final Widget? overlay;
+  final Widget? overlayInBetween;
+
+  /// Overlay to be placed on top of video controls.
+  final Widget? overlayTop;
 
   /// Creates [YoutubePlayer] widget.
   const YoutubePlayer({
@@ -153,7 +156,8 @@ class YoutubePlayer extends StatefulWidget {
     this.actionsPadding = const EdgeInsets.all(8.0),
     this.thumbnail,
     this.showVideoProgressIndicator = false,
-    this.overlay,
+    this.overlayInBetween,
+    this.overlayTop,
   })  : progressColors = progressColors ?? const ProgressBarColors(),
         progressIndicatorColor = progressIndicatorColor ?? Colors.red;
 
@@ -325,7 +329,7 @@ class _YoutubePlayerState extends State<YoutubePlayer> {
               child: widget.thumbnail ?? _thumbnail,
             ),
           //TODO: pass the stack here
-          if (widget.overlay != null) widget.overlay!,
+          if (widget.overlayInBetween != null) widget.overlayInBetween!,
 
           if (!controller.value.isFullScreen &&
               !controller.flags.hideControls &&
@@ -412,6 +416,7 @@ class _YoutubePlayerState extends State<YoutubePlayer> {
             Center(
               child: PlayPauseButton(),
             ),
+          if (widget.overlayTop != null) widget.overlayTop!,
           if (controller.value.hasError) errorWidget,
         ],
       ),
