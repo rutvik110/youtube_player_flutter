@@ -137,7 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
         showVideoProgressIndicator: true,
         progressIndicatorColor: Colors.blueAccent,
 
-        overlay: Container(
+        overlayInBetween: Container(
           height: 50,
           width: 50,
           color: Colors.red,
