@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -42,12 +41,12 @@ class _VideoListState extends State<VideoList> {
             controller: _controllers[index],
             actionsPadding: const EdgeInsets.only(left: 16.0),
             bottomActions: [
-              CurrentPosition(),
-              const SizedBox(width: 10.0),
-              ProgressBar(isExpanded: true),
-              const SizedBox(width: 10.0),
-              RemainingDuration(),
-              FullScreenButton(),
+              // CurrentPosition(),
+              // const SizedBox(width: 10.0),
+              // ProgressBar(isExpanded: true),
+              // const SizedBox(width: 10.0),
+              // RemainingDuration(),
+              // FullScreenButton(),
             ],
           );
         },

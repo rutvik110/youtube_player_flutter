@@ -161,12 +161,12 @@ class YoutubePlayerController extends ValueNotifier<YoutubePlayerValue> {
     this.flags = const YoutubePlayerFlags(),
   }) : super(YoutubePlayerValue());
 
-  /// Finds [YoutubePlayerController] in the provided context.
-  static YoutubePlayerController? of(BuildContext context) {
-    return context
-        .dependOnInheritedWidgetOfExactType<InheritedYoutubePlayer>()
-        ?.controller;
-  }
+  // /// Finds [YoutubePlayerController] in the provided context.
+  // static YoutubePlayerController? of(BuildContext context) {
+  //   return context
+  //       .dependOnInheritedWidgetOfExactType<InheritedYoutubePlayer>()
+  //       ?.controller;
+  // }
 
   _callMethod(String methodString) {
     if (value.isReady) {
@@ -313,18 +313,18 @@ class YoutubePlayerController extends ValueNotifier<YoutubePlayerValue> {
 }
 
 /// An inherited widget to provide [YoutubePlayerController] to it's descendants.
-class InheritedYoutubePlayer extends InheritedWidget {
-  /// Creates [InheritedYoutubePlayer]
-  const InheritedYoutubePlayer({
-    Key? key,
-    required this.controller,
-    required Widget child,
-  }) : super(key: key, child: child);
+// class InheritedYoutubePlayer extends InheritedWidget {
+//   /// Creates [InheritedYoutubePlayer]
+//   const InheritedYoutubePlayer({
+//     Key? key,
+//     required this.controller,
+//     required Widget child,
+//   }) : super(key: key, child: child);
 
-  /// A [YoutubePlayerController] which controls the player.
-  final YoutubePlayerController controller;
+//   /// A [YoutubePlayerController] which controls the player.
+//   final YoutubePlayerController controller;
 
-  @override
-  bool updateShouldNotify(InheritedYoutubePlayer oldPlayer) =>
-      oldPlayer.controller.hashCode != controller.hashCode;
-}
+//   @override
+//   bool updateShouldNotify(InheritedYoutubePlayer oldPlayer) =>
+//       oldPlayer.controller.hashCode != controller.hashCode;
+// }

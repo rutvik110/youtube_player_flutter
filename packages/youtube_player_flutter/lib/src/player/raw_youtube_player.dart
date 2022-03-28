@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import '../enums/player_state.dart';
@@ -20,10 +19,13 @@ class RawYoutubePlayer extends StatefulWidget {
   /// {@macro youtube_player_flutter.onEnded}
   final void Function(YoutubeMetaData metaData)? onEnded;
 
+  final YoutubePlayerController controller;
+
   /// Creates a [RawYoutubePlayer] widget.
   RawYoutubePlayer({
     this.key,
     this.onEnded,
+    required this.controller,
   });
 
   @override
@@ -70,7 +72,7 @@ class _RawYoutubePlayerState extends State<RawYoutubePlayer>
 
   @override
   Widget build(BuildContext context) {
-    controller = YoutubePlayerController.of(context);
+    controller = widget.controller;
     return IgnorePointer(
       ignoring: true,
       child: InAppWebView(

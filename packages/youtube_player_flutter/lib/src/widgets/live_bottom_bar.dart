@@ -11,7 +11,7 @@ import 'full_screen_button.dart';
 /// A widget to display bottom controls bar on Live Video Mode.
 class LiveBottomBar extends StatefulWidget {
   /// Overrides the default [YoutubePlayerController].
-  final YoutubePlayerController? controller;
+  final YoutubePlayerController controller;
 
   /// Defines color for UI.
   final Color liveUIColor;
@@ -21,7 +21,7 @@ class LiveBottomBar extends StatefulWidget {
 
   /// Creates [LiveBottomBar] widget.
   LiveBottomBar({
-    this.controller,
+    required this.controller,
     required this.liveUIColor,
     required this.showLiveFullscreenButton,
   });
@@ -36,25 +36,28 @@ class _LiveBottomBarState extends State<LiveBottomBar> {
   late YoutubePlayerController _controller;
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _controller = widget.controller;
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final controller = YoutubePlayerController.of(context);
-    if (controller == null) {
-      assert(
-        widget.controller != null,
-        '\n\nNo controller could be found in the provided context.\n\n'
-        'Try passing the controller explicitly.',
-      );
-      _controller = widget.controller!;
-    } else {
-      _controller = controller;
-    }
+    // final controller = YoutubePlayerController.of(context);
+    // if (controller == null) {
+    //   _controller = widget.controller;
+    // } else {
+    //   _controller = controller;
+    // }
     _controller.addListener(listener);
   }
 
   @override
   void dispose() {
     _controller.removeListener(listener);
+    // _controller.dispose();
     super.dispose();
   }
 
@@ -80,7 +83,9 @@ class _LiveBottomBarState extends State<LiveBottomBar> {
           const SizedBox(
             width: 14.0,
           ),
-          CurrentPosition(),
+          CurrentPosition(
+            _controller,
+          ),
           Expanded(
             child: Padding(
               child: Slider(

@@ -20,12 +20,15 @@ class ProgressBarColors {
   /// Defines color for handle of the [ProgressBar].
   final Color? handleColor;
 
+  final YoutubePlayerController controller;
+
   /// Creates [ProgressBarColors].
   const ProgressBarColors({
     this.backgroundColor,
     this.playedColor,
     this.bufferedColor,
     this.handleColor,
+    required this.controller,
   });
 
   ///
@@ -40,13 +43,14 @@ class ProgressBarColors {
         handleColor: handleColor ?? this.handleColor,
         bufferedColor: bufferedColor ?? this.bufferedColor,
         playedColor: playedColor ?? this.playedColor,
+        controller: controller,
       );
 }
 
 /// A widget to display video progress bar.
 class ProgressBar extends StatefulWidget {
   /// Overrides the default [YoutubePlayerController].
-  final YoutubePlayerController? controller;
+  final YoutubePlayerController controller;
 
   /// Defines colors for the progress bar.
   final ProgressBarColors? colors;
@@ -58,7 +62,7 @@ class ProgressBar extends StatefulWidget {
 
   /// Creates [ProgressBar] widget.
   ProgressBar({
-    this.controller,
+    required this.controller,
     this.colors,
     this.isExpanded = false,
   });
@@ -81,19 +85,26 @@ class _ProgressBarState extends State<ProgressBar> {
   late Duration _position;
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _controller = widget.controller;
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final controller = YoutubePlayerController.of(context);
-    if (controller == null) {
-      assert(
-        widget.controller != null,
-        '\n\nNo controller could be found in the provided context.\n\n'
-        'Try passing the controller explicitly.',
-      );
-      _controller = widget.controller!;
-    } else {
-      _controller = controller;
-    }
+    // final controller = YoutubePlayerController.of(context);
+    // if (controller == null) {
+    //   assert(
+    //     widget.controller != null,
+    //     '\n\nNo controller could be found in the provided context.\n\n'
+    //     'Try passing the controller explicitly.',
+    //   );
+    //   _controller = widget.controller!;
+    // } else {
+    //   _controller = controller;
+    // }
     _controller.addListener(positionListener);
     positionListener();
   }
@@ -101,6 +112,7 @@ class _ProgressBarState extends State<ProgressBar> {
   @override
   void dispose() {
     _controller.removeListener(positionListener);
+    // _controller.dispose();
     super.dispose();
   }
 
@@ -234,14 +246,14 @@ class _ProgressBarPainter extends CustomPainter {
     final secondProgressPoint =
         Offset(barLength * bufferedValue + handleRadius, centerY);
 
-    paint.color =
-        colors?.backgroundColor ?? themeData.accentColor.withOpacity(0.38);
+    paint.color = colors?.backgroundColor ??
+        themeData.colorScheme.secondary.withOpacity(0.38);
     canvas.drawLine(startPoint, endPoint, paint);
 
     paint.color = colors?.bufferedColor ?? Colors.white70;
     canvas.drawLine(startPoint, secondProgressPoint, paint);
 
-    paint.color = colors?.playedColor ?? themeData.accentColor;
+    paint.color = colors?.playedColor ?? themeData.colorScheme.secondary;
     canvas.drawLine(startPoint, progressPoint, paint);
 
     final handlePaint = Paint()..isAntiAlias = true;
@@ -249,7 +261,7 @@ class _ProgressBarPainter extends CustomPainter {
     handlePaint.color = Colors.transparent;
     canvas.drawCircle(progressPoint, centerY, handlePaint);
 
-    final _handleColor = colors?.handleColor ?? themeData.accentColor;
+    final _handleColor = colors?.handleColor ?? themeData.colorScheme.secondary;
 
     if (touchDown) {
       handlePaint.color = _handleColor.withOpacity(0.4);

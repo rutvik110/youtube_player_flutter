@@ -14,7 +14,7 @@ import '../utils/youtube_player_controller.dart';
 /// Also provides ability to seek video by dragging horizontally.
 class TouchShutter extends StatefulWidget {
   /// Overrides the default [YoutubePlayerController].
-  final YoutubePlayerController? controller;
+  final YoutubePlayerController controller;
 
   /// If true, disables the drag to seek functionality.
   ///
@@ -26,7 +26,7 @@ class TouchShutter extends StatefulWidget {
 
   /// Creates [TouchShutter] widget.
   TouchShutter({
-    this.controller,
+    required this.controller,
     this.disableDragSeek = false,
     required this.timeOut,
   });
@@ -46,33 +46,40 @@ class _TouchShutterState extends State<TouchShutter> {
   Timer? _timer;
 
   late YoutubePlayerController _controller;
+  bool isControllsVisible = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _controller = widget.controller;
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final controller = YoutubePlayerController.of(context);
-    if (controller == null) {
-      assert(
-        widget.controller != null,
-        '\n\nNo controller could be found in the provided context.\n\n'
-        'Try passing the controller explicitly.',
-      );
-      _controller = widget.controller!;
-    } else {
-      _controller = controller;
-    }
+    // final controller = YoutubePlayerController.of(context);
+    // if (controller == null) {
+    //   _controller = widget.controller;
+    // } else {
+    //   _controller = controller;
+    // }
   }
 
   @override
   void dispose() {
     _timer?.cancel();
+    // _controller.dispose();
     super.dispose();
   }
 
   void _toggleControls() {
+    setState(() {
+      isControllsVisible = !isControllsVisible;
+    });
     _controller.updateValue(
       _controller.value.copyWith(
-        isControlsVisible: !_controller.value.isControlsVisible,
+        isControlsVisible: isControllsVisible,
       ),
     );
     _timer?.cancel();
@@ -83,85 +90,87 @@ class _TouchShutterState extends State<TouchShutter> {
             isControlsVisible: false,
           ),
         );
+        setState(() {
+          isControllsVisible = false;
+        });
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return widget.disableDragSeek
-        ? GestureDetector(onTap: _toggleControls)
-        : GestureDetector(
-            onTap: _toggleControls,
-            onHorizontalDragStart: (details) {
-              setState(() {
-                _dragging = true;
-              });
-              dragStartPos = details.globalPosition.dx;
-            },
-            onHorizontalDragUpdate: (details) {
-              _controller.updateValue(
-                _controller.value.copyWith(
-                  isControlsVisible: false,
+    return
+        //  widget.disableDragSeek
+        //     ? GestureDetector(onTap: _toggleControls)
+        //     :
+        GestureDetector(
+      onTap: _toggleControls,
+      onHorizontalDragStart: (details) {
+        setState(() {
+          _dragging = true;
+        });
+        dragStartPos = details.globalPosition.dx;
+      },
+      onHorizontalDragUpdate: (details) {
+        _controller.updateValue(
+          _controller.value.copyWith(
+            isControlsVisible: false,
+          ),
+        );
+        delta = details.globalPosition.dx - dragStartPos;
+        seekToPosition =
+            (_controller.value.position.inMilliseconds + delta * 1000).round();
+        setState(() {
+          seekDuration = (delta < 0 ? "- " : "+ ") +
+              durationFormatter((delta < 0 ? -1 : 1) * (delta * 1000).round());
+          if (seekToPosition < 0) seekToPosition = 0;
+          seekPosition = durationFormatter(seekToPosition);
+        });
+      },
+      onHorizontalDragEnd: (_) {
+        _controller.seekTo(Duration(milliseconds: seekToPosition));
+        setState(() {
+          _dragging = false;
+        });
+      },
+      onScaleUpdate: (details) {
+        scaleAmount = details.scale;
+      },
+      onScaleEnd: (_) {
+        if (_controller.value.isFullScreen) {
+          if (scaleAmount > 1) {
+            _controller.fitWidth(MediaQuery.of(context).size);
+          }
+          if (scaleAmount < 1) {
+            _controller.fitHeight(MediaQuery.of(context).size);
+          }
+        }
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        color: _controller.value.isControlsVisible
+            ? Colors.black.withAlpha(150)
+            : Colors.transparent,
+        child: _dragging
+            ? Center(
+                child: Container(
+                  padding: const EdgeInsets.all(4.0),
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+                    color: Colors.black.withAlpha(150),
+                  ),
+                  child: Text(
+                    "$seekDuration ($seekPosition)",
+                    style: const TextStyle(
+                      fontSize: 26.0,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
-              );
-              delta = details.globalPosition.dx - dragStartPos;
-              seekToPosition =
-                  (_controller.value.position.inMilliseconds + delta * 1000)
-                      .round();
-              setState(() {
-                seekDuration = (delta < 0 ? "- " : "+ ") +
-                    durationFormatter(
-                        (delta < 0 ? -1 : 1) * (delta * 1000).round());
-                if (seekToPosition < 0) seekToPosition = 0;
-                seekPosition = durationFormatter(seekToPosition);
-              });
-            },
-            onHorizontalDragEnd: (_) {
-              _controller.seekTo(Duration(milliseconds: seekToPosition));
-              setState(() {
-                _dragging = false;
-              });
-            },
-            onScaleUpdate: (details) {
-              scaleAmount = details.scale;
-            },
-            onScaleEnd: (_) {
-              if (_controller.value.isFullScreen) {
-                if (scaleAmount > 1) {
-                  _controller.fitWidth(MediaQuery.of(context).size);
-                }
-                if (scaleAmount < 1) {
-                  _controller.fitHeight(MediaQuery.of(context).size);
-                }
-              }
-            },
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              color: _controller.value.isControlsVisible
-                  ? Colors.black.withAlpha(150)
-                  : Colors.transparent,
-              child: _dragging
-                  ? Center(
-                      child: Container(
-                        padding: const EdgeInsets.all(4.0),
-                        decoration: BoxDecoration(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(5.0)),
-                          color: Colors.black.withAlpha(150),
-                        ),
-                        child: Text(
-                          "$seekDuration ($seekPosition)",
-                          style: const TextStyle(
-                            fontSize: 26.0,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    )
-                  : Container(),
-            ),
-          );
+              )
+            : Container(),
+      ),
+    );
   }
 }
