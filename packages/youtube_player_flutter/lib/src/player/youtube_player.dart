@@ -340,12 +340,12 @@ class _YoutubePlayerState extends State<YoutubePlayer> {
           //     ),
           //   ),
           // ),
-          // if (!controller.flags.hideThumbnail)
-          //   AnimatedOpacity(
-          //     opacity: controller.value.isPlaying ? 0 : 1,
-          //     duration: const Duration(milliseconds: 300),
-          //     child: widget.thumbnail ?? _thumbnail,
-          //   ),
+          //   if (!controller.flags.hideThumbnail) widget.thumbnail ?? _thumbnail,
+          // AnimatedOpacity(
+          //   opacity: controller.value.isPlaying ? 0 : 1,
+          //   duration: const Duration(milliseconds: 300),
+          //   child: widget.thumbnail ?? _thumbnail,
+          // ),
           // //TODO: pass the stack here
           if (widget.overlayInBetween != null) widget.overlayInBetween!,
 
@@ -404,7 +404,9 @@ class _YoutubePlayerState extends State<YoutubePlayer> {
           // ],
           // if (!controller.flags.hideControls)
           //   Center(
-          //     child: PlayPauseButton(),
+          //     child: PlayPauseButton(
+          //       controller: controller,
+          //     ),
           //   ),
           // if (widget.overlayTop != null) widget.overlayTop!,
           // if (controller.value.hasError) errorWidget,

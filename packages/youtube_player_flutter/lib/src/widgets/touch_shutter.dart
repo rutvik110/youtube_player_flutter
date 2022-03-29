@@ -5,9 +5,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:youtube_player_flutter/src/utils/youtube_player_controller.dart';
 
 import '../utils/duration_formatter.dart';
-import '../utils/youtube_player_controller.dart';
 
 /// A widget to display darkened translucent overlay, when video area is touched.
 ///
@@ -45,14 +45,12 @@ class _TouchShutterState extends State<TouchShutter> {
   bool _dragging = false;
   Timer? _timer;
 
-  late YoutubePlayerController _controller;
   bool isControllsVisible = false;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _controller = widget.controller;
   }
 
   @override
@@ -60,16 +58,16 @@ class _TouchShutterState extends State<TouchShutter> {
     super.didChangeDependencies();
     // final controller = YoutubePlayerController.of(context);
     // if (controller == null) {
-    //   _controller = widget.controller;
+    //   widget.controller = widget.controller;
     // } else {
-    //   _controller = controller;
+    //   widget.controller = controller;
     // }
   }
 
   @override
   void dispose() {
     _timer?.cancel();
-    // _controller.dispose();
+    // widget.controller.dispose();
     super.dispose();
   }
 
@@ -77,16 +75,16 @@ class _TouchShutterState extends State<TouchShutter> {
     setState(() {
       isControllsVisible = !isControllsVisible;
     });
-    _controller.updateValue(
-      _controller.value.copyWith(
+    widget.controller.updateValue(
+      widget.controller.value.copyWith(
         isControlsVisible: isControllsVisible,
       ),
     );
     _timer?.cancel();
     _timer = Timer(widget.timeOut, () {
-      if (!_controller.value.isDragging) {
-        _controller.updateValue(
-          _controller.value.copyWith(
+      if (!widget.controller.value.isDragging) {
+        widget.controller.updateValue(
+          widget.controller.value.copyWith(
             isControlsVisible: false,
           ),
         );
@@ -112,14 +110,15 @@ class _TouchShutterState extends State<TouchShutter> {
         dragStartPos = details.globalPosition.dx;
       },
       onHorizontalDragUpdate: (details) {
-        _controller.updateValue(
-          _controller.value.copyWith(
+        widget.controller.updateValue(
+          widget.controller.value.copyWith(
             isControlsVisible: false,
           ),
         );
         delta = details.globalPosition.dx - dragStartPos;
         seekToPosition =
-            (_controller.value.position.inMilliseconds + delta * 1000).round();
+            (widget.controller.value.position.inMilliseconds + delta * 1000)
+                .round();
         setState(() {
           seekDuration = (delta < 0 ? "- " : "+ ") +
               durationFormatter((delta < 0 ? -1 : 1) * (delta * 1000).round());
@@ -128,7 +127,7 @@ class _TouchShutterState extends State<TouchShutter> {
         });
       },
       onHorizontalDragEnd: (_) {
-        _controller.seekTo(Duration(milliseconds: seekToPosition));
+        widget.controller.seekTo(Duration(milliseconds: seekToPosition));
         setState(() {
           _dragging = false;
         });
@@ -137,18 +136,17 @@ class _TouchShutterState extends State<TouchShutter> {
         scaleAmount = details.scale;
       },
       onScaleEnd: (_) {
-        if (_controller.value.isFullScreen) {
+        if (widget.controller.value.isFullScreen) {
           if (scaleAmount > 1) {
-            _controller.fitWidth(MediaQuery.of(context).size);
+            widget.controller.fitWidth(MediaQuery.of(context).size);
           }
           if (scaleAmount < 1) {
-            _controller.fitHeight(MediaQuery.of(context).size);
+            widget.controller.fitHeight(MediaQuery.of(context).size);
           }
         }
       },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        color: _controller.value.isControlsVisible
+      child: ColoredBox(
+        color: widget.controller.value.isControlsVisible
             ? Colors.black.withAlpha(150)
             : Colors.transparent,
         child: _dragging
