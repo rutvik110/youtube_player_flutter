@@ -232,11 +232,11 @@ class _YoutubePlayerState extends State<YoutubePlayer> {
   //   if (mounted) setState(() {});
   // }
 
-  // @override
-  // void dispose() {
-  //   controller.removeListener(listener);
-  //   super.dispose();
-  // }
+  @override
+  void dispose() {
+    // controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -489,7 +489,8 @@ class _YoutubeVideoProgressBarState extends State<YoutubeVideoProgressBar> {
   @override
   void dispose() {
     // TODO: implement dispose
-    controller.dispose();
+    // controller.removeListener(() {});
+    // controller.dispose();
     super.dispose();
   }
 

@@ -42,6 +42,7 @@ class _RawYoutubePlayerState extends State<RawYoutubePlayer>
   @override
   void initState() {
     super.initState();
+    controller = widget.controller;
     WidgetsBinding.instance?.addObserver(this);
   }
 
@@ -72,7 +73,6 @@ class _RawYoutubePlayerState extends State<RawYoutubePlayer>
 
   @override
   Widget build(BuildContext context) {
-    controller = widget.controller;
     return IgnorePointer(
       ignoring: true,
       child: InAppWebView(

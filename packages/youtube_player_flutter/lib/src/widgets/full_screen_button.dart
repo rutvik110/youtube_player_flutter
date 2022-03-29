@@ -32,6 +32,7 @@ class _FullScreenButtonState extends State<FullScreenButton> {
     // TODO: implement initState
     super.initState();
     _controller = widget.controller;
+    _controller.addListener(listener);
   }
 
   @override
@@ -43,8 +44,7 @@ class _FullScreenButtonState extends State<FullScreenButton> {
     // } else {
     //   _controller = controller;
     // }
-    _controller.removeListener(listener);
-    _controller.addListener(listener);
+    // _controller.removeListener(listener);
   }
 
   @override

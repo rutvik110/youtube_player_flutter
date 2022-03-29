@@ -89,6 +89,7 @@ class _ProgressBarState extends State<ProgressBar> {
     // TODO: implement initState
     super.initState();
     _controller = widget.controller;
+    _controller.addListener(positionListener);
   }
 
   @override
@@ -105,8 +106,8 @@ class _ProgressBarState extends State<ProgressBar> {
     // } else {
     //   _controller = controller;
     // }
-    _controller.addListener(positionListener);
-    positionListener();
+    // _controller.addListener(positionListener);
+    // positionListener();
   }
 
   @override

@@ -26,14 +26,14 @@ class _YoutubeVideoPlayerViewState extends State<YoutubeVideoPlayerView> {
   @override
   void initState() {
     super.initState();
-    controller = widget.controller..addListener(listener);
+    controller = widget.controller;
+    controller.addListener(listener);
   }
 
   @override
   void didUpdateWidget(YoutubeVideoPlayerView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.controller.removeListener(listener);
-    widget.controller.addListener(listener);
+    // oldWidget.controller.removeListener(listener);
   }
 
   void listener() async {
@@ -54,6 +54,7 @@ class _YoutubeVideoPlayerViewState extends State<YoutubeVideoPlayerView> {
   @override
   void dispose() {
     controller.removeListener(listener);
+    // controller.dispose();
     super.dispose();
   }
 

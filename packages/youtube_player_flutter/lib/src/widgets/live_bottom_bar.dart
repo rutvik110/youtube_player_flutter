@@ -40,6 +40,7 @@ class _LiveBottomBarState extends State<LiveBottomBar> {
     // TODO: implement initState
     super.initState();
     _controller = widget.controller;
+    _controller.addListener(listener);
   }
 
   @override
@@ -51,7 +52,6 @@ class _LiveBottomBarState extends State<LiveBottomBar> {
     // } else {
     //   _controller = controller;
     // }
-    _controller.addListener(listener);
   }
 
   @override
