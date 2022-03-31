@@ -38,7 +38,9 @@ class _YoutubeVideoPlayerViewState extends State<YoutubeVideoPlayerView> {
 
   void listener() async {
     if (controller.value.isReady && _initialLoad) {
-      _initialLoad = false;
+      setState(() {
+        _initialLoad = false;
+      });
       if (controller.flags.autoPlay) controller.play();
       if (controller.flags.mute) controller.mute();
       // widget.onReady?.call();
@@ -48,7 +50,7 @@ class _YoutubeVideoPlayerViewState extends State<YoutubeVideoPlayerView> {
         );
       }
     }
-    if (mounted) setState(() {});
+    // if (mounted) setState(() {});
   }
 
   @override
