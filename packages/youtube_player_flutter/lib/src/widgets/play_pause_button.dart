@@ -30,20 +30,23 @@ class PlayPauseButton extends StatefulWidget {
 class _PlayPauseButtonState extends State<PlayPauseButton>
     with TickerProviderStateMixin {
   late YoutubePlayerController _controller;
-  late AnimationController _animController;
+  // late AnimationController _animController;
   bool isPlaying = true;
 
   @override
   void initState() {
     super.initState();
     _controller = widget.controller;
-    _controller.addListener(_playPauseListener);
+    if (_controller.value.playerState == PlayerState.paused) {
+      isPlaying = false;
+    }
+    // _controller.addListener(_playPauseListener);
 
-    _animController = AnimationController(
-      vsync: this,
-      value: 0,
-      duration: const Duration(milliseconds: 300),
-    );
+    // _animController = AnimationController(
+    //   vsync: this,
+    //   value: 0,
+    //   duration: const Duration(milliseconds: 300),
+    // );
   }
 
   @override
@@ -61,20 +64,23 @@ class _PlayPauseButtonState extends State<PlayPauseButton>
 
   @override
   void dispose() {
-    _controller.removeListener(_playPauseListener);
+    // _controller.removeListener(_playPauseListener);
     // _controller.dispose();
-    _animController.dispose();
+    // _animController.dispose();
     super.dispose();
   }
 
-  void _playPauseListener() => _controller.value.isPlaying
-      ? _animController.forward()
-      : _animController.reverse();
+  // void _playPauseListener() => _controller.value.isPlaying
+  //     ? _animController.forward()
+  //     : _animController.reverse();
 
   @override
   Widget build(BuildContext context) {
     log('message');
     final _playerState = _controller.value.playerState;
+    if (_playerState == PlayerState.buffering) {
+      return widget.bufferIndicator ?? const SizedBox.shrink();
+    }
     if ((!_controller.flags.autoPlay && _controller.value.isReady) ||
         _playerState == PlayerState.playing ||
         _playerState == PlayerState.paused) {
@@ -103,8 +109,8 @@ class _PlayPauseButtonState extends State<PlayPauseButton>
         // ),
       );
     }
-    if (_controller.value.hasError) return const SizedBox();
-    return widget.bufferIndicator ?? const SizedBox();
+    if (_controller.value.hasError) return const SizedBox.shrink();
+    return widget.bufferIndicator ?? const SizedBox.shrink();
     // Container(
     //   width: 70.0,
     //   height: 70.0,
