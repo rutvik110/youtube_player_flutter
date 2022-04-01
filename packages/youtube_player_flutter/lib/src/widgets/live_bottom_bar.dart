@@ -67,7 +67,7 @@ class _LiveBottomBarState extends State<LiveBottomBar> {
         _currentSliderPosition =
             _controller.metadata.duration.inMilliseconds == 0
                 ? 0
-                : _controller.value.position.inMilliseconds /
+                : _controller.durationNotifier.value.position.inMilliseconds /
                     _controller.metadata.duration.inMilliseconds;
       });
     }

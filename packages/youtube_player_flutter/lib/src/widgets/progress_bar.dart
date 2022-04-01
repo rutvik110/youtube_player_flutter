@@ -89,7 +89,8 @@ class _ProgressBarState extends State<ProgressBar> {
     // TODO: implement initState
     super.initState();
     _controller = widget.controller;
-    _controller.addListener(positionListener);
+    _controller.durationNotifier.addListener(positionListener);
+    // _controller.addListener(positionListener);
   }
 
   @override
@@ -112,7 +113,9 @@ class _ProgressBarState extends State<ProgressBar> {
 
   @override
   void dispose() {
-    _controller.removeListener(positionListener);
+    // _controller.removeListener(positionListener);
+    _controller.durationNotifier.removeListener(positionListener);
+
     // _controller.dispose();
     super.dispose();
   }
@@ -122,8 +125,9 @@ class _ProgressBarState extends State<ProgressBar> {
     if (mounted && !_totalDuration.isNaN && _totalDuration != 0) {
       setState(() {
         _playedValue =
-            _controller.value.position.inMilliseconds / _totalDuration;
-        _bufferedValue = _controller.value.buffered;
+            _controller.durationNotifier.value.position.inMilliseconds /
+                _totalDuration;
+        _bufferedValue = _controller.durationNotifier.value.bufferPosition;
       });
     }
   }

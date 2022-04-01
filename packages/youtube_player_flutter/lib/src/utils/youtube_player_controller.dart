@@ -5,6 +5,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:youtube_player_flutter/src/utils/duration_notifier.dart';
 
 import '../enums/playback_rate.dart';
 import '../enums/player_state.dart';
@@ -20,8 +21,8 @@ class YoutubePlayerValue {
     this.isReady = false,
     this.isControlsVisible = false,
     this.hasPlayed = false,
-    this.position = const Duration(),
-    this.buffered = 0.0,
+    // this.position = const Duration(),
+    // this.buffered = 0.0,
     this.isPlaying = false,
     this.isFullScreen = false,
     this.volume = 100,
@@ -44,10 +45,10 @@ class YoutubePlayerValue {
   final bool hasPlayed;
 
   /// The current position of the video.
-  final Duration position;
+  // final Duration position;
 
   /// The position up to which the video is buffered.i
-  final double buffered;
+  // final double buffered;
 
   /// Reports true if video is playing.
   final bool isPlaying;
@@ -108,8 +109,8 @@ class YoutubePlayerValue {
       isReady: isReady ?? this.isReady,
       isControlsVisible: isControlsVisible ?? this.isControlsVisible,
       hasPlayed: hasPlayed ?? this.hasPlayed,
-      position: position ?? this.position,
-      buffered: buffered ?? this.buffered,
+      // position: position ?? this.position,
+      // buffered: buffered ?? this.buffered,
       isPlaying: isPlaying ?? this.isPlaying,
       isFullScreen: isFullScreen ?? this.isFullScreen,
       volume: volume ?? this.volume,
@@ -129,8 +130,8 @@ class YoutubePlayerValue {
         'metaData: ${metaData.toString()}, '
         'isReady: $isReady, '
         'isControlsVisible: $isControlsVisible, '
-        'position: ${position.inSeconds} sec. , '
-        'buffered: $buffered, '
+        // 'position: ${position.inSeconds} sec. , '
+        // 'buffered: $buffered, '
         'isPlaying: $isPlaying, '
         'volume: $volume, '
         'playerState: $playerState, '
@@ -155,6 +156,11 @@ class YoutubePlayerController extends ValueNotifier<YoutubePlayerValue> {
   /// Composes all the flags required to control the player.
   final YoutubePlayerFlags flags;
 
+  final DurationNotifier _durationNotifier = DurationNotifier();
+
+  /// Gets duration notifier
+  DurationNotifier get durationNotifier => _durationNotifier;
+
   /// Creates [YoutubePlayerController].
   YoutubePlayerController({
     required this.initialVideoId,
@@ -167,6 +173,12 @@ class YoutubePlayerController extends ValueNotifier<YoutubePlayerValue> {
   //       .dependOnInheritedWidgetOfExactType<InheritedYoutubePlayer>()
   //       ?.controller;
   // }
+
+  @mustCallSuper
+  void dispose() {
+    _durationNotifier.dispose();
+    super.dispose();
+  }
 
   _callMethod(String methodString) {
     if (value.isReady) {

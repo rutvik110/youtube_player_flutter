@@ -55,7 +55,7 @@ class _CurrentPositionState extends State<CurrentPosition> {
     // final controller = YoutubePlayerController.of(context);
     return Text(
       durationFormatter(
-        widget.controller.value.position.inMilliseconds,
+        widget.controller.durationNotifier.value.position.inMilliseconds,
       ),
       style: const TextStyle(
         color: Colors.white,
@@ -115,7 +115,7 @@ class _RemainingDurationState extends State<RemainingDuration> {
     return Text(
       "- ${durationFormatter(
         (widget.controller.metadata.duration.inMilliseconds) -
-            (widget.controller.value.position.inMilliseconds),
+            (widget.controller.durationNotifier.value.position.inMilliseconds),
       )}",
       style: const TextStyle(
         color: Colors.white,

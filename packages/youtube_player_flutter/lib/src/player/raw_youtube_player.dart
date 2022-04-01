@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:youtube_player_flutter/src/utils/duration_notifier.dart';
 
 import '../enums/player_state.dart';
 import '../utils/youtube_meta_data.dart';
@@ -215,14 +216,21 @@ class _RawYoutubePlayerState extends State<RawYoutubePlayer>
             ..addJavaScriptHandler(
               handlerName: 'VideoTime',
               callback: (args) {
+                //TODO: Need to refactor to send events to another stream for duration change
+                // not the main controller stream.
                 final position = args.first * 1000;
                 final num? buffered = args.last;
-                controller!.updateValue(
-                  controller!.value.copyWith(
-                    position: Duration(milliseconds: position.floor()),
-                    buffered: buffered?.toDouble(),
-                  ),
+                controller!.durationNotifier.updateDuration(
+                  VideoDurations(
+                      position: Duration(milliseconds: position.floor()),
+                      bufferPosition: buffered?.toDouble() ?? 0),
                 );
+                // controller!.updateValue(
+                //   controller!.value.copyWith(
+                //     position: Duration(milliseconds: position.floor()),
+                //     buffered: buffered?.toDouble(),
+                //   ),
+                // );
               },
             );
         },
