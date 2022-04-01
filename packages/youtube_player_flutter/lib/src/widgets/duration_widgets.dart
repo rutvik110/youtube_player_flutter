@@ -53,15 +53,19 @@ class _CurrentPositionState extends State<CurrentPosition> {
   @override
   Widget build(BuildContext context) {
     // final controller = YoutubePlayerController.of(context);
-    return Text(
-      durationFormatter(
-        widget.controller.durationNotifier.value.position.inMilliseconds,
-      ),
-      style: const TextStyle(
-        color: Colors.white,
-        fontSize: 12.0,
-      ),
-    );
+    return ValueListenableBuilder(
+        valueListenable: widget.controller.durationNotifier,
+        builder: (context, duration, child) {
+          return Text(
+            durationFormatter(
+              widget.controller.durationNotifier.value.position.inMilliseconds,
+            ),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 12.0,
+            ),
+          );
+        });
   }
 }
 
@@ -112,15 +116,20 @@ class _RemainingDurationState extends State<RemainingDuration> {
   Widget build(BuildContext context) {
     // final controller = YoutubePlayerController.of(context);
 
-    return Text(
-      "- ${durationFormatter(
-        (widget.controller.metadata.duration.inMilliseconds) -
-            (widget.controller.durationNotifier.value.position.inMilliseconds),
-      )}",
-      style: const TextStyle(
-        color: Colors.white,
-        fontSize: 12.0,
-      ),
-    );
+    return ValueListenableBuilder(
+        valueListenable: widget.controller.durationNotifier,
+        builder: (context, duration, child) {
+          return Text(
+            "- ${durationFormatter(
+              (widget.controller.metadata.duration.inMilliseconds) -
+                  (widget.controller.durationNotifier.value.position
+                      .inMilliseconds),
+            )}",
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 12.0,
+            ),
+          );
+        });
   }
 }
