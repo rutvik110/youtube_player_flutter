@@ -164,6 +164,7 @@ class _ProgressBarState extends State<ProgressBar> {
   Widget _buildBar() {
     return GestureDetector(
       onHorizontalDragDown: (details) {
+        _controller.pause();
         _controller.updateValue(
           _controller.value.copyWith(isControlsVisible: true, isDragging: true),
         );
