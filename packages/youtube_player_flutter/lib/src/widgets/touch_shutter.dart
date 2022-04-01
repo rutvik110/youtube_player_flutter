@@ -7,8 +7,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/src/utils/youtube_player_controller.dart';
 
-import '../utils/duration_formatter.dart';
-
 /// A widget to display darkened translucent overlay, when video area is touched.
 ///
 /// Also provides ability to seek video by dragging horizontally.
@@ -42,7 +40,7 @@ class _TouchShutterState extends State<TouchShutter> {
   int seekToPosition = 0;
   String seekDuration = "";
   String seekPosition = "";
-  bool _dragging = false;
+  final bool _dragging = false;
   Timer? _timer;
 
   bool isControllsVisible = false;
@@ -103,48 +101,48 @@ class _TouchShutterState extends State<TouchShutter> {
         //     :
         GestureDetector(
       onTap: _toggleControls,
-      onHorizontalDragStart: (details) {
-        setState(() {
-          _dragging = true;
-        });
-        dragStartPos = details.globalPosition.dx;
-      },
-      onHorizontalDragUpdate: (details) {
-        widget.controller.updateValue(
-          widget.controller.value.copyWith(
-            isControlsVisible: false,
-          ),
-        );
-        delta = details.globalPosition.dx - dragStartPos;
-        seekToPosition =
-            (widget.controller.value.position.inMilliseconds + delta * 1000)
-                .round();
-        setState(() {
-          seekDuration = (delta < 0 ? "- " : "+ ") +
-              durationFormatter((delta < 0 ? -1 : 1) * (delta * 1000).round());
-          if (seekToPosition < 0) seekToPosition = 0;
-          seekPosition = durationFormatter(seekToPosition);
-        });
-      },
-      onHorizontalDragEnd: (_) {
-        widget.controller.seekTo(Duration(milliseconds: seekToPosition));
-        setState(() {
-          _dragging = false;
-        });
-      },
-      onScaleUpdate: (details) {
-        scaleAmount = details.scale;
-      },
-      onScaleEnd: (_) {
-        if (widget.controller.value.isFullScreen) {
-          if (scaleAmount > 1) {
-            widget.controller.fitWidth(MediaQuery.of(context).size);
-          }
-          if (scaleAmount < 1) {
-            widget.controller.fitHeight(MediaQuery.of(context).size);
-          }
-        }
-      },
+      // onHorizontalDragStart: (details) {
+      //   // setState(() {
+      //   //   _dragging = true;
+      //   // });
+      //   // dragStartPos = details.globalPosition.dx;
+      // },
+      // onHorizontalDragUpdate: (details) {
+      //   widget.controller.updateValue(
+      //     widget.controller.value.copyWith(
+      //       isControlsVisible: false,
+      //     ),
+      //   );
+      //   delta = details.globalPosition.dx - dragStartPos;
+      //   seekToPosition =
+      //       (widget.controller.value.position.inMilliseconds + delta * 1000)
+      //           .round();
+      //   setState(() {
+      //     seekDuration = (delta < 0 ? "- " : "+ ") +
+      //         durationFormatter((delta < 0 ? -1 : 1) * (delta * 1000).round());
+      //     if (seekToPosition < 0) seekToPosition = 0;
+      //     seekPosition = durationFormatter(seekToPosition);
+      //   });
+      // },
+      // onHorizontalDragEnd: (_) {
+      //   widget.controller.seekTo(Duration(milliseconds: seekToPosition));
+      //   setState(() {
+      //     _dragging = false;
+      //   });
+      // },
+      // onScaleUpdate: (details) {
+      //   scaleAmount = details.scale;
+      // },
+      // onScaleEnd: (_) {
+      //   if (widget.controller.value.isFullScreen) {
+      //     if (scaleAmount > 1) {
+      //       widget.controller.fitWidth(MediaQuery.of(context).size);
+      //     }
+      //     if (scaleAmount < 1) {
+      //       widget.controller.fitHeight(MediaQuery.of(context).size);
+      //     }
+      //   }
+      // },
       child: ColoredBox(
         color: widget.controller.value.isControlsVisible
             ? Colors.black.withAlpha(150)
