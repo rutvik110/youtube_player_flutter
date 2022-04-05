@@ -222,8 +222,9 @@ class _RawYoutubePlayerState extends State<RawYoutubePlayer>
                 final num? buffered = args.last;
                 controller!.durationNotifier.updateDuration(
                   VideoDurations(
-                      position: Duration(milliseconds: position.floor()),
-                      bufferPosition: buffered?.toDouble() ?? 0),
+                    position: Duration(milliseconds: position.floor()),
+                    bufferPosition: buffered?.toDouble() ?? 0,
+                  ),
                 );
                 // controller!.updateValue(
                 //   controller!.value.copyWith(
