@@ -258,7 +258,7 @@ class YoutubePlayerController extends ValueNotifier<YoutubePlayerValue> {
   /// Default allowSeekAhead = true
   void seekTo(Duration position, {bool allowSeekAhead = true}) {
     _callMethod('seekTo(${position.inSeconds},$allowSeekAhead)');
-    play();
+    // play();
     updateValue(value.copyWith(position: position));
   }
 
