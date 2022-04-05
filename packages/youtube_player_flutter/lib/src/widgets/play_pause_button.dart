@@ -88,9 +88,11 @@ class _PlayPauseButtonState extends State<PlayPauseButton>
         borderRadius: BorderRadius.circular(50.0),
         onTap: () {
           isPlaying ? _controller.pause() : _controller.play();
-          setState(() {
-            isPlaying = !isPlaying;
-          });
+          if (mounted) {
+            setState(() {
+              isPlaying = !isPlaying;
+            });
+          }
         },
         child: isPlaying
             ? const Icon(

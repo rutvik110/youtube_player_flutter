@@ -123,12 +123,14 @@ class _ProgressBarState extends State<ProgressBar> {
   void positionListener() {
     var _totalDuration = _controller.metadata.duration.inMilliseconds;
     if (mounted && !_totalDuration.isNaN && _totalDuration != 0) {
-      setState(() {
-        _playedValue =
-            _controller.durationNotifier.value.position.inMilliseconds /
-                _totalDuration;
-        _bufferedValue = _controller.durationNotifier.value.bufferPosition;
-      });
+      if (mounted) {
+        setState(() {
+          _playedValue =
+              _controller.durationNotifier.value.position.inMilliseconds /
+                  _totalDuration;
+          _bufferedValue = _controller.durationNotifier.value.bufferPosition;
+        });
+      }
     }
   }
 
@@ -159,9 +161,12 @@ class _ProgressBarState extends State<ProgressBar> {
       _controller.value.copyWith(isControlsVisible: false, isDragging: false),
     );
     _controller.seekTo(_position, allowSeekAhead: true);
-    setState(() {
-      _touchDown = false;
-    });
+    if (mounted) {
+      setState(() {
+        _touchDown = false;
+      });
+    }
+
     _controller.play();
   }
 

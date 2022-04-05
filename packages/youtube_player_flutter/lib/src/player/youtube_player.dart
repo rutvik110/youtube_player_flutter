@@ -470,19 +470,24 @@ class YoutubeVideoProgressBar extends StatefulWidget {
 class _YoutubeVideoProgressBarState extends State<YoutubeVideoProgressBar> {
   late final YoutubePlayerController controller;
   bool showControlls = false;
+
+  void listener() {
+    final newValue = controller.value.isControlsVisible;
+    if (showControlls != newValue) {
+      if (mounted) {
+        setState(() {
+          showControlls = newValue;
+        });
+      }
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     controller = widget.controller;
-    controller.addListener(() {
-      final newValue = controller.value.isControlsVisible;
-      if (showControlls != newValue) {
-        setState(() {
-          showControlls = newValue;
-        });
-      }
-    });
+    controller.addListener(listener);
   }
 
   @override
@@ -493,6 +498,7 @@ class _YoutubeVideoProgressBarState extends State<YoutubeVideoProgressBar> {
 
   @override
   void dispose() {
+    controller.removeListener(listener);
     // TODO: implement dispose
     // controller.removeListener(() {});
     // controller.dispose();
