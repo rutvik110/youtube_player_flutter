@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:youtube_player_flutter/src/utils/duration_notifier.dart';
 
 import '../utils/youtube_player_controller.dart';
 import 'duration_widgets.dart';
@@ -31,79 +32,70 @@ class LiveBottomBar extends StatefulWidget {
 }
 
 class _LiveBottomBarState extends State<LiveBottomBar> {
-  late YoutubePlayerController _controller;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _controller = widget.controller;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Visibility(
-      visible: _controller.value.isControlsVisible,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          const SizedBox(
-            width: 14.0,
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        const SizedBox(
+          width: 14.0,
+        ),
+        CurrentPosition(
+          widget.controller,
+        ),
+        Expanded(
+          child: Padding(
+            child: ValueListenableBuilder<VideoDurations>(
+                valueListenable: widget.controller.durationNotifier,
+                builder: (context, position, child) {
+                  final currentSliderPosition =
+                      widget.controller.metadata.duration.inMilliseconds == 0
+                          ? 0
+                          : position.position.inMilliseconds /
+                              widget
+                                  .controller.metadata.duration.inMilliseconds;
+                  return Slider(
+                    value: currentSliderPosition >= 1.0
+                        ? 1.0
+                        : currentSliderPosition.toDouble(),
+                    onChanged: (value) {
+                      widget.controller.seekTo(
+                        Duration(
+                          milliseconds: (widget.controller.metadata.duration
+                                      .inMilliseconds *
+                                  value)
+                              .toInt(),
+                        ),
+                      );
+                    },
+                    activeColor: widget.liveUIColor,
+                    inactiveColor: Theme.of(context).colorScheme.secondary,
+                  );
+                }),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 8.0,
+            ),
           ),
-          CurrentPosition(
-            _controller,
-          ),
-          Expanded(
-            child: Padding(
-              child: ValueListenableBuilder(
-                  valueListenable: _controller.durationNotifier,
-                  builder: (context, position, child) {
-                    final currentSliderPosition =
-                        _controller.metadata.duration.inMilliseconds == 0
-                            ? 0
-                            : _controller.durationNotifier.value.position
-                                    .inMilliseconds /
-                                _controller.metadata.duration.inMilliseconds;
-                    return Slider(
-                      value: currentSliderPosition.clamp(0, 1).toDouble(),
-                      onChanged: (value) {
-                        _controller.seekTo(
-                          Duration(
-                            milliseconds: (_controller.durationNotifier.value
-                                        .position.inMilliseconds *
-                                    value)
-                                .toInt(),
-                          ),
-                        );
-                      },
-                      activeColor: widget.liveUIColor,
-                      inactiveColor: Theme.of(context).colorScheme.secondary,
-                    );
-                  }),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8.0,
+        ),
+        InkWell(
+          onTap: () =>
+              widget.controller.seekTo(widget.controller.metadata.duration),
+          child: Material(
+            color: widget.liveUIColor,
+            child: const Text(
+              ' LIVE ',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 12.0,
+                fontWeight: FontWeight.w300,
               ),
             ),
           ),
-          InkWell(
-            onTap: () => _controller.seekTo(_controller.metadata.duration),
-            child: Material(
-              color: widget.liveUIColor,
-              child: const Text(
-                ' LIVE ',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12.0,
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
-            ),
-          ),
-          widget.showLiveFullscreenButton
-              ? FullScreenButton(controller: _controller)
-              : const SizedBox(width: 14.0),
-        ],
-      ),
+        ),
+        widget.showLiveFullscreenButton
+            ? FullScreenButton(controller: widget.controller)
+            : const SizedBox(width: 14.0),
+      ],
     );
   }
 }
