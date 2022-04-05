@@ -2,10 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:youtube_player_flutter/src/utils/duration_notifier.dart';
 
 import '../utils/youtube_player_controller.dart';
-import 'duration_widgets.dart';
 import 'full_screen_button.dart';
 
 /// A widget to display bottom controls bar on Live Video Mode.
@@ -31,7 +33,7 @@ class LiveBottomBar extends StatefulWidget {
 }
 
 class _LiveBottomBarState extends State<LiveBottomBar> {
-  double _currentSliderPosition = 0.0;
+  double maxValueForSlider = 0.0;
 
   late YoutubePlayerController _controller;
 
@@ -40,92 +42,77 @@ class _LiveBottomBarState extends State<LiveBottomBar> {
     // TODO: implement initState
     super.initState();
     _controller = widget.controller;
-    _controller.addListener(listener);
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // final controller = YoutubePlayerController.of(context);
-    // if (controller == null) {
-    //   _controller = widget.controller;
-    // } else {
-    //   _controller = controller;
-    // }
-  }
-
-  @override
-  void dispose() {
-    _controller.removeListener(listener);
-    // _controller.dispose();
-    super.dispose();
-  }
-
-  void listener() {
-    if (mounted) {
-      setState(() {
-        _currentSliderPosition =
-            _controller.metadata.duration.inMilliseconds == 0
-                ? 0
-                : _controller.durationNotifier.value.position.inMilliseconds /
-                    _controller.metadata.duration.inMilliseconds;
-      });
-    }
+    //   _controller.durationNotifier.addListener(listener);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Visibility(
-      visible: _controller.value.isControlsVisible,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          const SizedBox(
-            width: 14.0,
-          ),
-          CurrentPosition(
-            _controller,
-          ),
-          Expanded(
-            child: Padding(
-              child: Slider(
-                value: _currentSliderPosition,
-                onChanged: (value) {
-                  _controller.seekTo(
-                    Duration(
-                      milliseconds:
-                          (_controller.metadata.duration.inMilliseconds * value)
-                              .round(),
-                    ),
+    return
+        //  !_controller.value.isControlsVisible
+        //     ? const SizedBox.shrink()
+        //     :
+        Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        const SizedBox(
+          width: 14.0,
+        ),
+        // CurrentPosition(
+        //   _controller,
+        // ),
+        Expanded(
+          child: Padding(
+            child: ValueListenableBuilder<VideoDurations>(
+                valueListenable: _controller.durationNotifier,
+                builder: (context, videoDueation, child) {
+                  if (maxValueForSlider <
+                      videoDueation.position.inMilliseconds) {
+                    maxValueForSlider =
+                        videoDueation.position.inMilliseconds.toDouble();
+                  }
+                  final sliderValue =
+                      videoDueation.position.inMilliseconds / maxValueForSlider;
+                  log(sliderValue.toString());
+                  return Slider(
+                    value: sliderValue.isNaN ? 1.0 : sliderValue,
+
+                    // min: 0,
+                    // max: maxValueForSlider,
+
+                    onChanged: (value) {
+                      _controller.seekTo(
+                        Duration(
+                          milliseconds: (maxValueForSlider * value).round(),
+                        ),
+                      );
+                    },
+                    activeColor: widget.liveUIColor,
+                    inactiveColor: Theme.of(context).colorScheme.secondary,
                   );
-                },
-                activeColor: widget.liveUIColor,
-                inactiveColor: Colors.transparent,
-              ),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8.0,
-              ),
+                }),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 8.0,
             ),
           ),
-          InkWell(
-            onTap: () => _controller.seekTo(_controller.metadata.duration),
-            child: Material(
-              color: widget.liveUIColor,
-              child: const Text(
-                ' LIVE ',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12.0,
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
-            ),
-          ),
-          widget.showLiveFullscreenButton
-              ? FullScreenButton(controller: _controller)
-              : const SizedBox(width: 14.0),
-        ],
-      ),
+        ),
+        // InkWell(
+        //   onTap: () => _controller.seekTo(_controller.metadata.duration),
+        //   child: Material(
+        //     color: widget.liveUIColor,
+        //     child: const Text(
+        //       ' LIVE ',
+        //       style: TextStyle(
+        //         color: Colors.white,
+        //         fontSize: 12.0,
+        //         fontWeight: FontWeight.w300,
+        //       ),
+        //     ),
+        //   ),
+        // ),
+        widget.showLiveFullscreenButton
+            ? FullScreenButton(controller: _controller)
+            : const SizedBox(width: 14.0),
+      ],
     );
   }
 }
