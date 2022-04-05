@@ -77,21 +77,21 @@ class _LiveBottomBarState extends State<LiveBottomBar> {
             ),
           ),
         ),
-        InkWell(
-          onTap: () =>
-              widget.controller.seekTo(widget.controller.metadata.duration),
-          child: Material(
-            color: widget.liveUIColor,
-            child: const Text(
-              ' LIVE ',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 12.0,
-                fontWeight: FontWeight.w300,
-              ),
-            ),
-          ),
-        ),
+        // InkWell(
+        //   onTap: () =>
+        //       widget.controller.seekTo(widget.controller.metadata.duration),
+        //   child: Material(
+        //     color: widget.liveUIColor,
+        //     child: const Text(
+        //       ' LIVE ',
+        //       style: TextStyle(
+        //         color: Colors.white,
+        //         fontSize: 12.0,
+        //         fontWeight: FontWeight.w300,
+        //       ),
+        //     ),
+        //   ),
+        // ),
         widget.showLiveFullscreenButton
             ? FullScreenButton(controller: widget.controller)
             : const SizedBox(width: 14.0),
