@@ -306,18 +306,14 @@ class _YoutubePlayerState extends State<YoutubePlayer> {
         fit: StackFit.expand,
         clipBehavior: Clip.none,
         children: [
-          RepaintBoundary(
-            child: Transform.scale(
-              scale: controller.value.isFullScreen
-                  ? (1 /
-                          widget.aspectRatio *
-                          MediaQuery.of(context).size.width) /
-                      MediaQuery.of(context).size.height
-                  : 1,
-              child: YoutubeVideoPlayerView(
-                controller: controller,
-                aspectRatio: widget.aspectRatio,
-              ),
+          Transform.scale(
+            scale: controller.value.isFullScreen
+                ? (1 / widget.aspectRatio * MediaQuery.of(context).size.width) /
+                    MediaQuery.of(context).size.height
+                : 1,
+            child: YoutubeVideoPlayerView(
+              controller: controller,
+              aspectRatio: widget.aspectRatio,
             ),
           ),
           // RepaintBoundary(
@@ -366,24 +362,28 @@ class _YoutubePlayerState extends State<YoutubePlayer> {
           //   ),
           // ),
           // if (!controller.flags.hideControls) ...[
-          TouchShutter(
-            disableDragSeek: controller.flags.disableDragSeek,
-            timeOut: widget.controlsTimeOut,
-            controller: controller,
+          RepaintBoundary(
+            child: TouchShutter(
+              disableDragSeek: controller.flags.disableDragSeek,
+              timeOut: widget.controlsTimeOut,
+              controller: controller,
+            ),
           ),
           Positioned.fill(
             bottom: 0,
             left: 0,
             right: 0,
-            child: YoutubeVideoProgressBar(
-              actionsPadding: widget.actionsPadding,
-              controller: controller,
-              topActions: widget.topActions,
-              liveUiColor: widget.liveUIColor,
-              bottomActions: widget.bottomActions,
-              showVideoProgressIndicator: widget.showVideoProgressIndicator,
-              progressColors: widget.progressColors ??
-                  ProgressBarColors(controller: controller),
+            child: RepaintBoundary(
+              child: YoutubeVideoProgressBar(
+                actionsPadding: widget.actionsPadding,
+                controller: controller,
+                topActions: widget.topActions,
+                liveUiColor: widget.liveUIColor,
+                bottomActions: widget.bottomActions,
+                showVideoProgressIndicator: widget.showVideoProgressIndicator,
+                progressColors: widget.progressColors ??
+                    ProgressBarColors(controller: controller),
+              ),
             ),
           ),
           //   Positioned(

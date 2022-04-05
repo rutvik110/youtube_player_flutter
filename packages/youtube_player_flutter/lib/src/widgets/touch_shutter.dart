@@ -86,9 +86,11 @@ class _TouchShutterState extends State<TouchShutter> {
             isControlsVisible: false,
           ),
         );
-        setState(() {
-          isControllsVisible = false;
-        });
+        if (mounted) {
+          setState(() {
+            isControllsVisible = false;
+          });
+        }
       }
     });
   }
@@ -165,7 +167,7 @@ class _TouchShutterState extends State<TouchShutter> {
                   ),
                 ),
               )
-            : Container(),
+            : const SizedBox.shrink(),
       ),
     );
   }
