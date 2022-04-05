@@ -542,9 +542,9 @@ class _YoutubeVideoProgressBarState extends State<YoutubeVideoProgressBar> {
                                 controller: controller,
                               ),
                               RemainingDuration(controller),
-                              PlaybackSpeedButton(
-                                controller: controller,
-                              ),
+                              // PlaybackSpeedButton(
+                              //   controller: controller,
+                              // ),
                               FullScreenButton(
                                 controller: controller,
                               ),
