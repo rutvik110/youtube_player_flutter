@@ -9,8 +9,7 @@ import '../utils/youtube_player_controller.dart';
 import 'duration_widgets.dart';
 import 'full_screen_button.dart';
 
-/// A widget to display bottom controls bar on Live Video Mode.
-class LiveBottomBar extends StatefulWidget {
+class LiveBottomBar extends StatelessWidget {
   /// Overrides the default [YoutubePlayerController].
   final YoutubePlayerController controller;
 
@@ -20,18 +19,13 @@ class LiveBottomBar extends StatefulWidget {
   /// Defines whether to show or hide the fullscreen button
   final bool showLiveFullscreenButton;
 
-  /// Creates [LiveBottomBar] widget.
-  LiveBottomBar({
+  /// Creates [LiveBottomBar]
+  const LiveBottomBar({
     required this.controller,
     required this.liveUIColor,
     required this.showLiveFullscreenButton,
   });
 
-  @override
-  _LiveBottomBarState createState() => _LiveBottomBarState();
-}
-
-class _LiveBottomBarState extends State<LiveBottomBar> {
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -41,34 +35,33 @@ class _LiveBottomBarState extends State<LiveBottomBar> {
           width: 14.0,
         ),
         CurrentPosition(
-          widget.controller,
+          controller,
         ),
         Expanded(
           child: Padding(
             child: ValueListenableBuilder<VideoDurations>(
-                valueListenable: widget.controller.durationNotifier,
+                valueListenable: controller.durationNotifier,
                 builder: (context, position, child) {
                   final currentSliderPosition =
-                      widget.controller.metadata.duration.inMilliseconds == 0
+                      controller.metadata.duration.inMilliseconds == 0
                           ? 0
                           : position.position.inMilliseconds /
-                              widget
-                                  .controller.metadata.duration.inMilliseconds;
+                              controller.metadata.duration.inMilliseconds;
                   return Slider(
                     value: currentSliderPosition >= 1.0
                         ? 1.0
                         : currentSliderPosition.toDouble(),
                     onChanged: (value) {
-                      widget.controller.seekTo(
+                      controller.seekTo(
                         Duration(
-                          milliseconds: (widget.controller.metadata.duration
-                                      .inMilliseconds *
-                                  value)
-                              .toInt(),
+                          milliseconds:
+                              (controller.metadata.duration.inMilliseconds *
+                                      value)
+                                  .toInt(),
                         ),
                       );
                     },
-                    activeColor: widget.liveUIColor,
+                    activeColor: liveUIColor,
                     inactiveColor: Theme.of(context).colorScheme.secondary,
                   );
                 }),
@@ -79,9 +72,9 @@ class _LiveBottomBarState extends State<LiveBottomBar> {
         ),
         // InkWell(
         //   onTap: () =>
-        //       widget.controller.seekTo(widget.controller.metadata.duration),
+        //     controller.seekTo(controller.metadata.duration),
         //   child: Material(
-        //     color: widget.liveUIColor,
+        //     color: liveUIColor,
         //     child: const Text(
         //       ' LIVE ',
         //       style: TextStyle(
@@ -92,8 +85,8 @@ class _LiveBottomBarState extends State<LiveBottomBar> {
         //     ),
         //   ),
         // ),
-        widget.showLiveFullscreenButton
-            ? FullScreenButton(controller: widget.controller)
+        showLiveFullscreenButton
+            ? FullScreenButton(controller: controller)
             : const SizedBox(width: 14.0),
       ],
     );

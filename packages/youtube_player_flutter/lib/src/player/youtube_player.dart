@@ -343,7 +343,10 @@ class _YoutubePlayerState extends State<YoutubePlayer> {
           //   child: widget.thumbnail ?? _thumbnail,
           // ),
           // //TODO: pass the stack here
-          if (widget.overlayInBetween != null) widget.overlayInBetween!,
+          if (widget.overlayInBetween != null)
+            RepaintBoundary(
+              child: widget.overlayInBetween!,
+            ),
 
           // Positioned(
           //   bottom: -7.0,
