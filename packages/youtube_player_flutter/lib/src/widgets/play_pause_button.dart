@@ -87,62 +87,85 @@ class _PlayPauseButtonState extends State<PlayPauseButton>
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          IconButton(
-            onPressed: () {
-              final currentPosition =
-                  widget.controller.durationNotifier.value.position;
-              final backToDuration =
-                  Duration(seconds: currentPosition.inSeconds - 10);
-              widget.controller.seekTo(backToDuration);
-              // if (!isPlaying) {
-              //   widget.controller.pause();
-              // }
-            },
-            icon: const Icon(
-              Icons.replay_10_outlined,
-              size: 36,
+          Material(
+            shape: const CircleBorder(),
+            color: Colors.transparent,
+            child: InkWell(
+              customBorder: const CircleBorder(),
+              onTap: () {
+                final currentPosition =
+                    widget.controller.durationNotifier.value.position;
+                final backToDuration =
+                    Duration(seconds: currentPosition.inSeconds - 10);
+                widget.controller.seekTo(backToDuration);
+                // if (!isPlaying) {
+                //   widget.controller.pause();
+                // }
+              },
+              child: const Padding(
+                padding: EdgeInsets.all(5.0),
+                child: Icon(
+                  Icons.replay_10_outlined,
+                  size: 36,
+                ),
+              ),
             ),
           ),
-          InkWell(
-            borderRadius: BorderRadius.circular(50.0),
-            onTap: () {
-              isPlaying ? _controller.pause() : _controller.play();
-              if (mounted) {
-                setState(() {
-                  isPlaying = !isPlaying;
-                });
-              }
-            },
-            child: isPlaying
-                ? const Icon(
-                    Icons.pause,
-                    size: 36,
-                  )
-                : const Icon(
-                    Icons.play_arrow,
-                    size: 36,
-                  ),
-            //  AnimatedIcon(
-            //   icon: AnimatedIcons.play_pause,
-            //   progress: _animController.view,
-            //   color: Colors.white,
-            //   size: 60.0,
-            // ),
+          Material(
+            shape: const CircleBorder(),
+            color: Colors.transparent,
+            child: InkWell(
+              customBorder: const CircleBorder(),
+              onTap: () {
+                isPlaying ? _controller.pause() : _controller.play();
+                if (mounted) {
+                  setState(() {
+                    isPlaying = !isPlaying;
+                  });
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(5),
+                child: isPlaying
+                    ? const Icon(
+                        Icons.pause,
+                        size: 36,
+                      )
+                    : const Icon(
+                        Icons.play_arrow,
+                        size: 36,
+                      ),
+              ),
+              //  AnimatedIcon(
+              //   icon: AnimatedIcons.play_pause,
+              //   progress: _animController.view,
+              //   color: Colors.white,
+              //   size: 60.0,
+              // ),
+            ),
           ),
-          IconButton(
-            onPressed: () {
-              final currentPosition =
-                  widget.controller.durationNotifier.value.position;
-              final forwardToDuration =
-                  Duration(seconds: currentPosition.inSeconds + 10);
-              widget.controller.seekTo(forwardToDuration);
-              // if (!isPlaying) {
-              //   widget.controller.pause();
-              // }
-            },
-            icon: const Icon(
-              Icons.forward_10,
-              size: 36,
+          Material(
+            shape: const CircleBorder(),
+            color: Colors.transparent,
+            child: InkWell(
+              customBorder: const CircleBorder(),
+              onTap: () {
+                final currentPosition =
+                    widget.controller.durationNotifier.value.position;
+                final forwardToDuration =
+                    Duration(seconds: currentPosition.inSeconds + 10);
+                widget.controller.seekTo(forwardToDuration);
+                // if (!isPlaying) {
+                //   widget.controller.pause();
+                // }
+              },
+              child: const Padding(
+                padding: EdgeInsets.all(5),
+                child: Icon(
+                  Icons.forward_10,
+                  size: 36,
+                ),
+              ),
             ),
           ),
         ],
