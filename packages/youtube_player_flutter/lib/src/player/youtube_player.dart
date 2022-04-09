@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: public_member_api_docs
+
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -184,16 +186,6 @@ class YoutubePlayer extends StatefulWidget {
     return null;
   }
 
-  /// Grabs YouTube video's thumbnail for provided video id.
-  static String getThumbnail({
-    required String videoId,
-    String quality = ThumbnailQuality.standard,
-    bool webp = true,
-  }) =>
-      webp
-          ? 'https://i3.ytimg.com/vi_webp/$videoId/$quality.webp'
-          : 'https://i3.ytimg.com/vi/$videoId/$quality.jpg';
-
   @override
   _YoutubePlayerState createState() => _YoutubePlayerState();
 }
@@ -336,11 +328,8 @@ class _YoutubePlayerState extends State<YoutubePlayer> {
           //     ),
           //   ),
           // ),
-          //   if (!controller.flags.hideThumbnail) widget.thumbnail ?? _thumbnail,
-          // AnimatedOpacity(
-          //   opacity: controller.value.isPlaying ? 0 : 1,
-          //   duration: const Duration(milliseconds: 300),
-          //   child: widget.thumbnail ?? _thumbnail,
+          // VideoThumbnail(
+          //   controller: controller,
           // ),
           // //TODO: pass the stack here
           if (widget.overlayInBetween != null)
@@ -417,29 +406,99 @@ class _YoutubePlayerState extends State<YoutubePlayer> {
       ),
     );
   }
+}
 
-  Widget get _thumbnail => Image.network(
-        YoutubePlayer.getThumbnail(
-          videoId: controller.metadata.videoId.isEmpty
-              ? controller.initialVideoId
-              : controller.metadata.videoId,
-        ),
-        fit: BoxFit.cover,
-        loadingBuilder: (_, child, progress) =>
-            progress == null ? child : Container(color: Colors.black),
-        errorBuilder: (context, _, __) => Image.network(
-          YoutubePlayer.getThumbnail(
-            videoId: controller.metadata.videoId.isEmpty
-                ? controller.initialVideoId
-                : controller.metadata.videoId,
-            webp: false,
-          ),
-          fit: BoxFit.cover,
-          loadingBuilder: (_, child, progress) =>
-              progress == null ? child : Container(color: Colors.black),
-          errorBuilder: (context, _, __) => Container(),
-        ),
-      );
+class VideoThumbnail extends StatefulWidget {
+  const VideoThumbnail({
+    Key? key,
+    required this.controller,
+  }) : super(key: key);
+
+  final YoutubePlayerController controller;
+
+  @override
+  State<VideoThumbnail> createState() => _VideoThumbnailState();
+}
+
+class _VideoThumbnailState extends State<VideoThumbnail> {
+  void listener() {
+    if (widget.controller.value.isReady && showThumbnail) {
+      showThumbnail = false;
+      setState(() {});
+    }
+  }
+
+  late bool showThumbnail;
+
+  /// Grabs YouTube video's thumbnail for provided video id.
+  static String getThumbnail({
+    required String videoId,
+    String quality = ThumbnailQuality.standard,
+    bool webp = true,
+  }) =>
+      webp
+          ? 'https://i3.ytimg.com/vi_webp/$videoId/$quality.webp'
+          : 'https://i3.ytimg.com/vi/$videoId/$quality.jpg';
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    showThumbnail = true;
+
+    widget.controller.addListener(listener);
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    widget.controller.removeListener(listener);
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 300),
+      layoutBuilder: (child, childrens) {
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            child!,
+            ...childrens,
+          ],
+        );
+      },
+      transitionBuilder: (child, animation) {
+        return FadeTransition(
+          opacity: animation,
+          child: child,
+        );
+      },
+      child: showThumbnail
+          ? Image.network(
+              getThumbnail(
+                videoId: widget.controller.initialVideoId,
+              ),
+              fit: BoxFit.cover,
+              loadingBuilder: (_, child, progress) => progress == null
+                  ? child
+                  : const Center(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                            color: Colors.white, shape: BoxShape.circle),
+                        child: Padding(
+                          padding: EdgeInsets.all(5),
+                          child: CircularProgressIndicator.adaptive(),
+                        ),
+                      ),
+                    ),
+              errorBuilder: (context, _, __) => const SizedBox.shrink(),
+            )
+          : const SizedBox.shrink(),
+    );
+  }
 }
 
 class YoutubeVideoProgressBar extends StatefulWidget {
