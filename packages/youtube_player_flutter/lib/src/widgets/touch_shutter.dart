@@ -90,6 +90,11 @@ class _TouchShutterState extends State<TouchShutter> {
           setState(() {
             isControllsVisible = false;
           });
+          widget.controller.updateValue(
+            widget.controller.value.copyWith(
+              isControlsVisible: false,
+            ),
+          );
         }
       }
     });
