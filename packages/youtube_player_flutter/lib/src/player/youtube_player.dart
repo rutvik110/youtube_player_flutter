@@ -362,7 +362,25 @@ class _YoutubePlayerState extends State<YoutubePlayer> {
                       ProgressBarColors(controller: controller),
                 ),
               ),
-            )
+            ),
+          if (!controller.value.hasPlayed)
+            Positioned(
+              top: 10,
+              left: 10,
+              child: ElevatedButton(
+                // shape: const CircleBorder(),
+                style: ElevatedButton.styleFrom(
+                  shape: const CircleBorder(),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Icon(
+                  Icons.arrow_back,
+                  color: Colors.white,
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -515,17 +533,9 @@ class _YoutubeVideoProgressBarState extends State<YoutubeVideoProgressBar> {
   }
 
   @override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
-  }
-
-  @override
   void dispose() {
     controller.removeListener(listener);
-    // TODO: implement dispose
-    // controller.removeListener(() {});
-    // controller.dispose();
+
     super.dispose();
   }
 
