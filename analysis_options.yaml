@@ -1,6 +1,6 @@
 analyzer:
   exclude:
-    - 'example/**'
+    - "example/**"
 
 linter:
   rules:

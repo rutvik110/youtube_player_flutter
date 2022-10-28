@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 import '../enums/player_state.dart';
@@ -11,17 +9,17 @@ import '../utils/youtube_player_controller.dart';
 
 /// A widget to display play/pause button.
 class PlayPauseButton extends StatefulWidget {
+  /// Creates [PlayPauseButton] widget.
+  const PlayPauseButton({
+    required this.controller,
+    this.bufferIndicator,
+  });
+
   /// Overrides the default [YoutubePlayerController].
   final YoutubePlayerController controller;
 
   /// Defines placeholder widget to show when player is in buffering state.
   final Widget? bufferIndicator;
-
-  /// Creates [PlayPauseButton] widget.
-  PlayPauseButton({
-    required this.controller,
-    this.bufferIndicator,
-  });
 
   @override
   _PlayPauseButtonState createState() => _PlayPauseButtonState();
@@ -31,15 +29,16 @@ class _PlayPauseButtonState extends State<PlayPauseButton>
     with TickerProviderStateMixin {
   late YoutubePlayerController _controller;
   // late AnimationController _animController;
-  bool isPlaying = true;
+  bool isPlaying = false;
 
   @override
   void initState() {
     super.initState();
     _controller = widget.controller;
-    if (_controller.value.playerState == PlayerState.paused) {
-      isPlaying = false;
-    }
+    // if (_controller.value.playerState == PlayerState.playing) {
+    isPlaying = _controller.value.playerState == PlayerState.playing;
+
+    // }
     // _controller.addListener(_playPauseListener);
 
     // _animController = AnimationController(
@@ -76,14 +75,13 @@ class _PlayPauseButtonState extends State<PlayPauseButton>
 
   @override
   Widget build(BuildContext context) {
-    log('message');
-    final _playerState = _controller.value.playerState;
-    if (_playerState == PlayerState.buffering) {
+    final PlayerState playerState = _controller.value.playerState;
+    if (playerState == PlayerState.buffering) {
       return widget.bufferIndicator ?? const SizedBox.shrink();
     }
     if ((!_controller.flags.autoPlay && _controller.value.isReady) ||
-        _playerState == PlayerState.playing ||
-        _playerState == PlayerState.paused) {
+        playerState == PlayerState.playing ||
+        playerState == PlayerState.paused) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -93,9 +91,9 @@ class _PlayPauseButtonState extends State<PlayPauseButton>
             child: InkWell(
               customBorder: const CircleBorder(),
               onTap: () {
-                final currentPosition =
+                final Duration currentPosition =
                     widget.controller.durationNotifier.value.position;
-                final backToDuration =
+                final Duration backToDuration =
                     Duration(seconds: currentPosition.inSeconds - 10);
                 widget.controller.seekTo(backToDuration);
                 // if (!isPlaying) {
@@ -103,7 +101,7 @@ class _PlayPauseButtonState extends State<PlayPauseButton>
                 // }
               },
               child: const Padding(
-                padding: EdgeInsets.all(5.0),
+                padding: EdgeInsets.all(5),
                 child: Icon(
                   Icons.replay_10_outlined,
                   size: 36,
@@ -150,9 +148,9 @@ class _PlayPauseButtonState extends State<PlayPauseButton>
             child: InkWell(
               customBorder: const CircleBorder(),
               onTap: () {
-                final currentPosition =
+                final Duration currentPosition =
                     widget.controller.durationNotifier.value.position;
-                final forwardToDuration =
+                final Duration forwardToDuration =
                     Duration(seconds: currentPosition.inSeconds + 10);
                 widget.controller.seekTo(forwardToDuration);
                 // if (!isPlaying) {
