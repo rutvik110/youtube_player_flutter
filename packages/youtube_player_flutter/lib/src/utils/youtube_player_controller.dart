@@ -150,6 +150,12 @@ class YoutubePlayerValue {
 ///
 /// After [dispose] all further calls are ignored.
 class YoutubePlayerController extends ValueNotifier<YoutubePlayerValue> {
+  /// Creates [YoutubePlayerController].
+  YoutubePlayerController({
+    required this.initialVideoId,
+    this.flags = const YoutubePlayerFlags(),
+  }) : super(YoutubePlayerValue());
+
   /// The video id with which the player initializes.
   final String initialVideoId;
 
@@ -161,12 +167,6 @@ class YoutubePlayerController extends ValueNotifier<YoutubePlayerValue> {
   /// Gets duration notifier
   DurationNotifier get durationNotifier => _durationNotifier;
 
-  /// Creates [YoutubePlayerController].
-  YoutubePlayerController({
-    required this.initialVideoId,
-    this.flags = const YoutubePlayerFlags(),
-  }) : super(YoutubePlayerValue());
-
   // /// Finds [YoutubePlayerController] in the provided context.
   // static YoutubePlayerController? of(BuildContext context) {
   //   return context
@@ -174,13 +174,15 @@ class YoutubePlayerController extends ValueNotifier<YoutubePlayerValue> {
   //       ?.controller;
   // }
 
+  @override
   @mustCallSuper
   void dispose() {
     _durationNotifier.dispose();
     super.dispose();
   }
 
-  _callMethod(String methodString) {
+  // ignore: always_declare_return_types
+  void _callMethod(String methodString) {
     if (value.isReady) {
       value.webViewController?.evaluateJavascript(source: methodString);
     } else {
@@ -200,7 +202,7 @@ class YoutubePlayerController extends ValueNotifier<YoutubePlayerValue> {
 
   /// Loads the video as per the [videoId] provided.
   void load(String videoId, {int startAt = 0, int? endAt}) {
-    var loadParams = 'videoId:"$videoId",startSeconds:$startAt';
+    String loadParams = 'videoId:"$videoId",startSeconds:$startAt';
     if (endAt != null && endAt > startAt) {
       loadParams += ',endSeconds:$endAt';
     }
@@ -214,7 +216,7 @@ class YoutubePlayerController extends ValueNotifier<YoutubePlayerValue> {
 
   /// Cues the video as per the [videoId] provided.
   void cue(String videoId, {int startAt = 0, int? endAt}) {
-    var cueParams = 'videoId:"$videoId",startSeconds:$startAt';
+    String cueParams = 'videoId:"$videoId",startSeconds:$startAt';
     if (endAt != null && endAt > startAt) {
       cueParams += ',endSeconds:$endAt';
     }
@@ -250,7 +252,7 @@ class YoutubePlayerController extends ValueNotifier<YoutubePlayerValue> {
   /// Max = 100 , Min = 0
   void setVolume(int volume) => volume >= 0 && volume <= 100
       ? _callMethod('setVolume($volume)')
-      : throw Exception("Volume should be between 0 and 100");
+      : throw Exception('Volume should be between 0 and 100');
 
   /// Seek to any position. Video auto plays after seeking.
   /// The optional allowSeekAhead parameter determines whether the player will make a new request to the server
@@ -268,7 +270,7 @@ class YoutubePlayerController extends ValueNotifier<YoutubePlayerValue> {
 
   /// Fits the video to screen width.
   void fitWidth(Size screenSize) {
-    var adjustedHeight = 9 / 16 * screenSize.width;
+    double adjustedHeight = 9 / 16 * screenSize.width;
     setSize(Size(screenSize.width, adjustedHeight));
     _callMethod(
       'setTopMargin("-${((adjustedHeight - screenSize.height) / 2 * 100).abs()}px")',
@@ -314,7 +316,7 @@ class YoutubePlayerController extends ValueNotifier<YoutubePlayerValue> {
           playerState: PlayerState.unknown,
           hasPlayed: false,
           position: Duration.zero,
-          buffered: 0.0,
+          buffered: 0,
           errorCode: 0,
           isLoaded: false,
           isPlaying: false,
