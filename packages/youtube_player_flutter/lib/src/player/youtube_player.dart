@@ -217,8 +217,8 @@ class _YoutubePlayerState extends State<YoutubePlayer> {
 
   @override
   void dispose() {
-    // controller.dispose();
     controller.removeListener(listenToPlayedEvents);
+    controller.dispose();
     super.dispose();
   }
 
