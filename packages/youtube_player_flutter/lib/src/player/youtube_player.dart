@@ -286,103 +286,107 @@ class _YoutubePlayerState extends State<YoutubePlayer> {
 
   // ignore: long-method
   Widget _buildPlayer({required Widget errorWidget}) {
-    return AspectRatio(
-      aspectRatio: widget.aspectRatio,
-      child: Stack(
-        fit: StackFit.expand,
-        clipBehavior: Clip.none,
-        children: [
-          Transform.scale(
-            scale: controller.value.isFullScreen
-                ? (1 / widget.aspectRatio * MediaQuery.of(context).size.width) /
-                    MediaQuery.of(context).size.height
-                : 1,
-            child: YoutubeVideoPlayerView(
-              controller: controller,
-              aspectRatio: widget.aspectRatio,
-            ),
-          ),
-          if (widget.overlayInBetween != null)
-            RepaintBoundary(
-              child: widget.overlayInBetween!,
-            ),
-          if (controller.value.hasPlayed)
-            RepaintBoundary(
-              child: TouchShutter(
-                disableDragSeek: controller.flags.disableDragSeek,
-                timeOut: widget.controlsTimeOut,
+    return Stack(
+      fit: StackFit.expand,
+      clipBehavior: Clip.none,
+      children: [
+        Center(
+          child: AspectRatio(
+            aspectRatio: widget.aspectRatio,
+            child: Transform.scale(
+              scale: controller.value.isFullScreen
+                  ? (1 /
+                          widget.aspectRatio *
+                          MediaQuery.of(context).size.width) /
+                      MediaQuery.of(context).size.height
+                  : 1,
+              child: YoutubeVideoPlayerView(
                 controller: controller,
+                aspectRatio: widget.aspectRatio,
               ),
             ),
-          AnimatedBuilder(
-            animation: controller,
-            builder: (BuildContext context, Widget? child) {
-              return !controller.value.isReady
-                  ? const CircularAdaptiveProgressIndicatorWithBg()
-                  : controller.value.hasPlayed ||
-                          controller.value.playerState == PlayerState.buffering
-                      ? const SizedBox.shrink()
-                      : Center(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(
-                                0xFFFF0000,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                  14,
-                                ),
-                              ),
-                              fixedSize: const Size(
-                                70,
-                                48,
+          ),
+        ),
+        if (widget.overlayInBetween != null)
+          RepaintBoundary(
+            child: widget.overlayInBetween!,
+          ),
+        if (controller.value.hasPlayed)
+          RepaintBoundary(
+            child: TouchShutter(
+              disableDragSeek: controller.flags.disableDragSeek,
+              timeOut: widget.controlsTimeOut,
+              controller: controller,
+            ),
+          ),
+        AnimatedBuilder(
+          animation: controller,
+          builder: (BuildContext context, Widget? child) {
+            return !controller.value.isReady
+                ? const CircularAdaptiveProgressIndicatorWithBg()
+                : controller.value.hasPlayed ||
+                        controller.value.playerState == PlayerState.buffering
+                    ? const SizedBox.shrink()
+                    : Center(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(
+                              0xFFFF0000,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                14,
                               ),
                             ),
-                            onPressed: () {
-                              controller.play();
-                            },
-                            child: const Icon(
-                              Icons.play_arrow_rounded,
+                            fixedSize: const Size(
+                              70,
+                              48,
                             ),
                           ),
-                        );
-            },
+                          onPressed: () {
+                            controller.play();
+                          },
+                          child: const Icon(
+                            Icons.play_arrow_rounded,
+                          ),
+                        ),
+                      );
+          },
+        ),
+        if (controller.value.hasPlayed)
+          Positioned.fill(
+            child: RepaintBoundary(
+              child: YoutubeVideoProgressBar(
+                actionsPadding: widget.actionsPadding,
+                controller: controller,
+                topActions: widget.topActions,
+                liveUiColor: widget.liveUIColor,
+                bottomActions: widget.bottomActions,
+                showVideoProgressIndicator: widget.showVideoProgressIndicator,
+                progressColors: widget.progressColors ??
+                    ProgressBarColors(controller: controller),
+              ),
+            ),
           ),
-          if (controller.value.hasPlayed)
-            Positioned.fill(
-              child: RepaintBoundary(
-                child: YoutubeVideoProgressBar(
-                  actionsPadding: widget.actionsPadding,
-                  controller: controller,
-                  topActions: widget.topActions,
-                  liveUiColor: widget.liveUIColor,
-                  bottomActions: widget.bottomActions,
-                  showVideoProgressIndicator: widget.showVideoProgressIndicator,
-                  progressColors: widget.progressColors ??
-                      ProgressBarColors(controller: controller),
-                ),
+        if (!controller.value.hasPlayed)
+          Positioned(
+            top: 10,
+            left: 10,
+            child: ElevatedButton(
+              // shape: const CircleBorder(),
+              style: ElevatedButton.styleFrom(
+                shape: const CircleBorder(),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Icon(
+                Icons.arrow_back,
+                color: Colors.white,
               ),
             ),
-          if (!controller.value.hasPlayed)
-            Positioned(
-              top: 10,
-              left: 10,
-              child: ElevatedButton(
-                // shape: const CircleBorder(),
-                style: ElevatedButton.styleFrom(
-                  shape: const CircleBorder(),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Icon(
-                  Icons.arrow_back,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-        ],
-      ),
+          ),
+      ],
     );
   }
 }
