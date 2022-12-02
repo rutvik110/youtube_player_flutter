@@ -293,18 +293,18 @@ class _YoutubePlayerState extends State<YoutubePlayer> {
         Center(
           child: AspectRatio(
             aspectRatio: widget.aspectRatio,
-            child: Transform.scale(
-              scale: controller.value.isFullScreen
-                  ? (1 /
-                          widget.aspectRatio *
-                          MediaQuery.of(context).size.width) /
-                      MediaQuery.of(context).size.height
-                  : 1,
-              child: YoutubeVideoPlayerView(
-                controller: controller,
-                aspectRatio: widget.aspectRatio,
-              ),
+            // child: Transform.scale(
+            //   scale: controller.value.isFullScreen
+            //       ? (1 /
+            //               widget.aspectRatio *
+            //               MediaQuery.of(context).size.width) /
+            //           MediaQuery.of(context).size.height
+            //       : 1,
+            child: YoutubeVideoPlayerView(
+              controller: controller,
+              aspectRatio: widget.aspectRatio,
             ),
+            // ),
           ),
         ),
         if (widget.overlayInBetween != null)
