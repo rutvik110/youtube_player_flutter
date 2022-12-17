@@ -9,12 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/src/player/player_video.dart';
 
 import '../../youtube_player_flutter.dart';
-import '../enums/thumbnail_quality.dart';
 import '../utils/errors.dart';
-import '../utils/youtube_meta_data.dart';
-import '../utils/youtube_player_controller.dart';
-import '../utils/youtube_player_flags.dart';
-import '../widgets/widgets.dart';
 
 /// A widget to play or stream YouTube videos using the official [YouTube IFrame Player API](https://developers.google.com/youtube/iframe_api_reference).
 ///
@@ -63,10 +58,11 @@ class YoutubePlayer extends StatefulWidget {
     this.showVideoProgressIndicator = false,
     this.overlayInBetween,
     this.overlayTop,
-  }) :
+  })  :
         // progressColors =
         //           progressColors ?? ProgressBarColors(controller: controller),
-        progressIndicatorColor = progressIndicatorColor ?? Colors.red;
+        progressIndicatorColor = progressIndicatorColor ?? Colors.red,
+        super(key: key);
 
   /// Sets [Key] as an identification to underlying web view associated to the player.
   @override
@@ -218,7 +214,7 @@ class _YoutubePlayerState extends State<YoutubePlayer> {
   @override
   void dispose() {
     controller.removeListener(listenToPlayedEvents);
-    controller.dispose();
+    // controller.dispose();
     super.dispose();
   }
 
